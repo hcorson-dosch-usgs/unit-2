@@ -18,7 +18,8 @@ var mymap = L.map('mapid').setView([51.505, -0.09], 13);
 // The L.tileLayer method allows you to load and display tile layers on your map.
 // It takes a url string, as well as options such as minimum zoom level and maximum zoom level
 //
-// The addTo method adds a layer to the given map or layer group
+// The addTo method is an inherited method of TileLayer
+// it adds a layer to the given map or layer group
 L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
     maxZoom: 18,

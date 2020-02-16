@@ -1,4 +1,4 @@
-// Leaflet quickstart tutorial
+// Leaflet geoJSON tutorial
 
 // Make a map of London
 // initialize the map and set its view and initial zoom level (13)
@@ -45,7 +45,10 @@ var geojsonFeature = {
 // The L.geoJSON method represents a single GeoJSON object
 // or an array of GeoJSON objects, and allows you to parse
 // and display GeoJSON data on the map
+// It inherits methods and properties from the FeatureGroup class
+// which in turn inherits methods and properties from the LayerGroup class
 // It can optionally take a GeoJSON object and an options object
+// Many of the options are functions that set how to display the geoJSOn content
 L.geoJSON(geojsonFeature).addTo(mymap);
 
 // The GeoJSON object could also be passed as an array of valid GeoJSON objects
@@ -118,6 +121,8 @@ var states = [{
     }
 }];
 
+// Here the L.geoJSON method has a style function as its options object
+// The style function returns a specific color depending on the attribute
 L.geoJSON(states, {
     style: function(feature) {
         switch (feature.properties.party) {
@@ -141,10 +146,75 @@ var geojsonMarkerOptions = {
     fillOpacity: 0.8
 };
 
+// Here the L.geoJSON method has a pointToLayer function
+// as its options object. It defines how points in the geoJSOn
+// should be represented as Leaflet layers. Each GeoJOSN point
+// feature and its coordinates are passed to the function
 L.geoJSON(geojsonFeature, {
     pointToLayer: function (feature, latlng) {
         return L.circleMarker(latlng, geojsonMarkerOptions);
     }
 }).addTo(mymap);
 
+// Here the L.geoJSON method has a onEachFeature function
+// as its options object. It is called for each create feature
+// and can be used to attach events or popups to features
 //
+// The bindPopup function binds the pre-defined popupContent
+// to each feature passed by the onEachFeature method
+function onEachFeature(feature, layer) {
+    // does this feature have a property named popupContent?
+    if (feature.properties && feature.properties.popupContent) {
+        layer.bindPopup(feature.properties.popupContent);
+    }
+}
+
+var geojsonFeature = {
+    "type": "Feature",
+    "properties": {
+        "name": "Coors Field",
+        "amenity": "Baseball Stadium",
+        "popupContent": "This is where the Rockies play!"
+    },
+    "geometry": {
+        "type": "Point",
+        "coordinates": [-104.99404, 39.75621]
+    }
+};
+
+L.geoJSON(geojsonFeature, {
+    onEachFeature: onEachFeature
+}).addTo(mymap);
+
+// Here the L.geoJSON method has a filter function
+// as its options object. This function decides whether
+// or not to include a given feature.
+//
+// Here, Busch Field will not be shown
+var someFeatures = [{
+    "type": "Feature",
+    "properties": {
+        "name": "Coors Field",
+        "show_on_map": true
+    },
+    "geometry": {
+        "type": "Point",
+        "coordinates": [-104.99404, 39.75621]
+    }
+}, {
+    "type": "Feature",
+    "properties": {
+        "name": "Busch Field",
+        "show_on_map": false
+    },
+    "geometry": {
+        "type": "Point",
+        "coordinates": [-104.98404, 39.74621]
+    }
+}];
+
+L.geoJSON(someFeatures, {
+    filter: function(feature, layer) {
+        return feature.properties.show_on_map;
+    }
+}).addTo(mymap);
