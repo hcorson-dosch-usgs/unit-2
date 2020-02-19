@@ -1,0 +1,21 @@
+﻿Borough,Station,latitude,longitude,ID,Station_name,2011,2012,2013,2014,2015,2016,2017,2018,2018_rank
+Manhattan,Times Sq 42 St N subway Q subway R subwayW subway S subway 1 subway 2 subway 3 subway 7 subway 42 St A subway C subway E subway,40.7546119985154,-73.9867680015397,209,42nd St,189426,195464,197696,204908,206247,202363,203545,204017,1
+Manhattan,Grand Central 42 St S subway 4 subway 5 subway 6 subway 7 subway,40.7518074298163,-73.9767132992584,200,Grand Central,147644,150266,153861,157899,160294,158580,154711,155345,2
+Manhattan,34 St Herald Square B subway D subway F subway M subway N subway Q subway R subway W subway,40.7496445600944,-73.9879368338264,264,34th St,121081,121120,122517,125355,126776,125682,127664,126576,3
+Manhattan,14 St Union Sq L subway N subway Q subway R subway W subway 4 subway 5 subway 6 subway,40.7346730009961,-73.9899509988188,337,14th St Union Square,107352,108000,108158,109472,108440,106718,107141,103572,4
+Manhattan,Fulton St A subway C subway J subway Z subway 2 subway 3 subway 4 subway 5 subway,40.6871189995077,-73.9753749983314,22,Fulton St,63203,62779,64461,69444,74676,85440,91771,92990,5
+Manhattan,34 St Penn Station 1 subway 2 subway 3 subway ,40.7503730000394,-73.9910569991398,271,34th St,87482,88929,90042,92693,92176,90524,85585,85180,6
+Manhattan,34 St Penn Station A subway C subway E subway ,40.7522870007758,-73.9933909997057,311,34th St,81585,82511,83717,85634,84778,82584,78904,80346,7
+Manhattan,59 St Columbus Circle A subway B subway C subway D subway 1 subway,40.7682495317760,-73.9816487230139,178,59th St Columbus Circle,67901,69653,72236,74572,73954,73836,73105,73003,8
+Manhattan,Lexington Av 53 St E subway M subway 51 St 6 subway,40.7571069998931,-73.9719200006998,229,51st St,66045,67821,69973,70606,70686,69750,66118,64499,10
+Manhattan,47 50 Sts Rockefeller Center B subway D subway F subway M subway,40.7586410015981,-73.9813310022770,262,47 50th Sts Rockefeller Center,59979,59749,61099,62693,63803,62283,61478,61027,11
+Manhattan,42 St Bryant Pk B subway D subway F subway M subway 5 Av 7 subway,40.7541840013125,-73.9845909990471,98,42nd St,50375,51962,53222,54289,55400,57793,57395,55872,12
+Queens,Flushing Main St 7 subway,40.7595999991501,-73.8300300026250,324,Flushing Main St,60184,60540,60190,60252,60226,60259,58511,55669,13
+Manhattan,Lexington Av N subwayW subway R subway 59 St 4 subway 5 subway 6 subway,40.6413616662838,-74.0178809995398,288,59th St,65855,67478,67841,69332,68988,67684,58467,55608,14
+Queens,74 Bway 7 subway Jackson Hts-Roosevelt Av E subway F subway M subway R subway,40.7465396911588,-73.8912986651969,244,Jackson Heights Roosevelt Ave,49828,50194,50841,51285,51925,52296,52018,51766,15
+Manhattan,14 St F subway M subway 1 subway 2 subway 3 subway 6 Av L subway ,40.7382279996951,-73.9962089992135,223,14th St,47831,49237,49316,49990,50335,50692,48565,48508,16
+Manhattan,Canal St J subway N subway Q subway R subway W subway Z subway 6 subway,40.7181738769739,-73.9998263854593,346,Canal St,45700,45952,44696,44362,44409,45030,47601,47034,17
+Manhattan,14 St A subway C subway E subway 8 Av L subway ,40.7408930001932,-74.0016899993702,92,14th St,38802,40990,42718,43953,45253,44680,43434,44031,18
+Brooklyn,Atlantic Av Barclays Ctr  B subway D subway N subway Q subway R subway 2 subway ,40.6836656672794,-73.9788099995676,31,Atlantic Av,33160,35670,39871,41645,42231,42711,42095,43211,19
+Manhattan,86 St 4 subway 5 subway 6 subway,40.7794919982095,-73.9555889998513,259,86th St,62214,63550,64741,65634,65948,64793,45882,43169,20
+Brooklyn,Jay St MetroTech A subway C subway F subway R subway,40.6924706368470,-73.9872181526731,79,Jay St Borough Hall,38037,39561,40183,41405,43456,44267,43833,42274,21
