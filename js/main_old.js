@@ -55,8 +55,9 @@ function calcPropRadius(attValue) {
   return radius;
 };
 
-// Function to convert markers to circle markers
-function pointToLayer(feature, latlng){
+
+// Step 3: Add circle markers for subway stations to map
+function createPropSymbols(data){
   // Step 4: Determine the attribute for scaling the proportional symbols
   var attribute = "AWR_2011";
 
@@ -69,47 +70,36 @@ function pointToLayer(feature, latlng){
     opacity: 1,
     fillOpacity: 0.6
   };
-  // Step 5: For each feature, determine its value for the selected attribute
-  var attValue = Number(feature.properties[attribute]);
 
-  // Step 6: Give each feature's circle marker a radius based on its attribute value
-  // Call the function calcPropRadius to set the radius for the layer marker
-  geojsonMarkerOptions.radius = calcPropRadius(attValue);
-
-  // Create circle marker layer
-  var layer = L.circleMarker(latlng, geojsonMarkerOptions);
-
-  // // Build popup content string
-  // var popupContent = "<p><b>Station:</b> " + feature.properties.Station + "</p><p><b>" + attribute + ":</b>" + feature.properties[attribute] + "</p>";
-  //
-  // // Bind the popup to the circle marker
-  // layer.bindPopup(popupContent);
-
-  // Return the circle marker to the L.geoJSON
-  return layer;
-
-};
-
-// Step 3: Add circle markers for subway stations to map
-function createPropSymbols(data, map){
   //create a Leaflet GeoJSON layer and add it to the map
   L.geoJson(data, {
-    pointToLayer: pointToLayer
+    pointToLayer: function (feature, latlng){
+      // Step 5: For each feature, determine its value for the selected attribute
+      var attValue = Number(feature.properties[attribute]);
+
+      // Step 6: Give each feature's circle marker a radius based on its attribute value
+      // Call the function calcPropRadius to set the radius for the layer marker
+      geojsonMarkerOptions.radius = calcPropRadius(attValue);
+
+      // Create circle markers
+      return L.circleMarker(latlng, geojsonMarkerOptions);
+    },
+    onEachFeature: onEachFeature
   }).addTo(map);
 };
 
 
 // add function to attach popups to each mapped feature
 function onEachFeature(feature, layer) {
-  // // create html string with all properties for popup
-  // var popupContent = "";
-  // if (feature.properties) {
-  //   // iterate through property names and values to add them to html string
-  //   for (var property in feature.properties){
-  //       popupContent += "<p>" + property + ": " + feature.properties[property] + "</p>";
-  //   }
-  //   layer.bindPopup(popupContent);
-  // };
+  // create html string with all properties for popup
+  var popupContent = "";
+  if (feature.properties) {
+    // iterate through property names and values to add them to html string
+    for (var property in feature.properties){
+        popupContent += "<p>" + property + ": " + feature.properties[property] + "</p>";
+    }
+    layer.bindPopup(popupContent);
+  };
 };
 
 // STEP 2 - Import GeoJSON data
