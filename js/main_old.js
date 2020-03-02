@@ -42,7 +42,7 @@ function calcMinValue(data) {
   var minValue = Math.min(...allValues)
 
   return minValue;
-}
+};
 
 // Calculate the radius of each proportional symbol
 function calcPropRadius(attValue) {
@@ -55,9 +55,8 @@ function calcPropRadius(attValue) {
   return radius;
 };
 
-
 // Step 3: Add circle markers for subway stations to map
-function createPropSymbols(data){
+function pointToLayer(feature, latlng){
   // Step 4: Determine the attribute for scaling the proportional symbols
   var attribute = "AWR_2011";
 
@@ -71,36 +70,43 @@ function createPropSymbols(data){
     fillOpacity: 0.6
   };
 
-  //create a Leaflet GeoJSON layer and add it to the map
+  // Step 5: For each feature, determine its value for the selected attribute
+  var attValue = Number(feature.properties[attribute]);
+
+  // Step 6: Give each feature's circle marker a radius based on its attribute value
+  // Call the function calcPropRadius to set the radius for the layer marker
+  geojsonMarkerOptions.radius = calcPropRadius(attValue);
+
+  // create circle marker layer
+  var layer = L.circleMarker(latlng, geojsonMarkerOptions);
+
+  // Build string for popup content
+  var popupContent = "<p><b>Station:</b> " + feature.properties.Station +
+  "</p><p><b>" + "<p>Lines served:</b> " + feature.properties.Lines +
+  "</p><p>";
+  // Add formatted attribute to popup content String
+  var year = attribute.split("_")[1];
+  popupContent += "<p><b>Average weekday ridership in " + year + ":</b> "
+  + feature.properties[attribute] + "</p>";
+
+  // Bind the popupt to the circle marker
+  layer.bindPopup(popupContent, {
+    offset: new L.Point(0,-geojsonMarkerOptions.radius)
+  });
+
+  // return the circle maker to the L.geoJson pointToLayer option
+  return layer;
+
+};
+
+//Add the created circle markers to the map
+function createPropSymbols(data){
+  // create a leaflet GeoJSOn layer and add it to the map
   L.geoJson(data, {
-    pointToLayer: function (feature, latlng){
-      // Step 5: For each feature, determine its value for the selected attribute
-      var attValue = Number(feature.properties[attribute]);
-
-      // Step 6: Give each feature's circle marker a radius based on its attribute value
-      // Call the function calcPropRadius to set the radius for the layer marker
-      geojsonMarkerOptions.radius = calcPropRadius(attValue);
-
-      // Create circle markers
-      return L.circleMarker(latlng, geojsonMarkerOptions);
-    },
-    onEachFeature: onEachFeature
+    pointToLayer: pointToLayer
   }).addTo(map);
 };
 
-
-// add function to attach popups to each mapped feature
-function onEachFeature(feature, layer) {
-  // create html string with all properties for popup
-  var popupContent = "";
-  if (feature.properties) {
-    // iterate through property names and values to add them to html string
-    for (var property in feature.properties){
-        popupContent += "<p>" + property + ": " + feature.properties[property] + "</p>";
-    }
-    layer.bindPopup(popupContent);
-  };
-};
 
 // STEP 2 - Import GeoJSON data
 //function to retrieve the data (using AJAX) and place it on the map
