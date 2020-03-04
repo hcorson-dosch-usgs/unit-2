@@ -83,13 +83,7 @@ function pointToLayer(feature, latlng, attributes){
   var layer = L.circleMarker(latlng, geojsonMarkerOptions);
 
   // Build string for popup content
-  var popupContent = "<p><b>Station:</b> " + feature.properties.Station +
-  "</p><p><b>" + "<p>Lines served:</b> " + feature.properties.Lines +
-  "</p><p>";
-  // Add formatted attribute to popup content String
-  var year = attribute.split("_")[1];
-  popupContent += "<p><b>Average weekday ridership in " + year + ":</b> "
-  + feature.properties[attribute] + "</p>";
+  var popupContent = createPopupContent(feature.properties, attribute);
 
   // Bind the popupt to the circle marker
   layer.bindPopup(popupContent, {
@@ -100,6 +94,20 @@ function pointToLayer(feature, latlng, attributes){
   return layer;
 
 };
+
+function createPopupContent(properties, attribute) {
+  // Add station to popup content String
+  var popupContent = "<p><b>Station:</b> " + properties.Station +
+  "</p><p>" + "<b><p>Lines served:</b> " + properties.Lines +
+  "</p>";
+
+  // Add formatted attribute to panel content String
+  var year = attribute.split("_")[1];
+  popupContent += "<p><b>Average weekday ridership in " + year + ":</b> "
+  + properties[attribute] + "</p>";
+
+  return popupContent;
+}
 
 //Add the created circle markers to the map
 function createPropSymbols(data){
@@ -204,14 +212,7 @@ function updatePropSymbols(attribute){
       layer.setRadius(radius);
 
       //add station to popup content String
-      var popupContent = "<p><b>Station:</b> " + props.Station +
-      "</p><p><b>" + "<p>Lines served:</b> " + props.Lines +
-      "</p>";
-
-      //add formatted attribute to panel content String
-      var year = attribute.split("_")[1];
-      popupContent += "<p><b>Average Weekday Ridership in " + year
-      + ":</b> " + props[attribute] + "</p>";
+      var popupContent = createPopupContent(props, attribute);
 
       //update popup popup content
       popup = layer.getPopup();

@@ -83,22 +83,30 @@ function pointToLayer(feature, latlng, attributes){
   var layer = L.circleMarker(latlng, geojsonMarkerOptions);
 
   // Build string for popup content
-  var popupContent = "<p><b>Station:</b> " + feature.properties.Station +
-  "</p><p><b>" + "<p>Lines served:</b> " + feature.properties.Lines +
-  "</p><p>";
-  // Add formatted attribute to popup content String
-  var year = attribute.split("_")[1];
-  popupContent += "<p><b>Average weekday ridership in " + year + ":</b> "
-  + feature.properties[attribute] + "</p>";
+  var popupContent = new PopupContent(feature.properties, attribute);
+
+  // temp change to popup
+  // popupContent.formatted = "<h2>" + popupContent.ridership + "</h2";
 
   // Bind the popupt to the circle marker
-  layer.bindPopup(popupContent, {
+  layer.bindPopup(popupContent.formatted, {
     offset: new L.Point(0,-geojsonMarkerOptions.radius)
   });
 
   // return the circle maker to the L.geoJson pointToLayer option
   return layer;
 
+};
+
+function PopupContent(properties, attribute) {
+  this.properties = properties;
+  this.attribute = attribute;
+  this.year = attribute.split("_")[1];
+  this.ridership = this.properties[attribute];
+  this.formatted = "<p><b>Station:</b> " + this.properties.Station +
+  "</p><p>" + "<b><p>Lines served:</b> " + this.properties.Lines +
+  "</p><p><b>Average weekday ridership in " + this.year + ":</b> "
+  + this.ridership + "</p>";
 };
 
 //Add the created circle markers to the map
@@ -204,18 +212,11 @@ function updatePropSymbols(attribute){
       layer.setRadius(radius);
 
       //add station to popup content String
-      var popupContent = "<p><b>Station:</b> " + props.Station +
-      "</p><p><b>" + "<p>Lines served:</b> " + props.Lines +
-      "</p>";
-
-      //add formatted attribute to panel content String
-      var year = attribute.split("_")[1];
-      popupContent += "<p><b>Average Weekday Ridership in " + year
-      + ":</b> " + props[attribute] + "</p>";
+      var popupContent = new PopupContent(props, attribute);
 
       //update popup popup content
       popup = layer.getPopup();
-      popup.setContent(popupContent).update();
+      popup.setContent(popupContent.formatted).update();
     };
   });
 };
