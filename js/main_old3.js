@@ -23,27 +23,6 @@ function createMap(){
     getData();
 };
 
-//Sequence Step 3. Create an array of the sequential attributes to keep track of their order
-function processData(data) {
-  // empty array to hold attributes
-  var attributes = [];
-
-  // properties of the first feature in the dataset
-  var properties = data.features[0].properties;
-
-  // push each attribute name into attributes array
-  for (var attribute in properties){
-    // only take attributes with average weekday ridership values
-    if (attribute.indexOf("AWR") > -1){
-      attributes.push(attribute);
-    };
-  };
-  // check result
-  console.log(attributes);
-
-  return attributes;
-};
-
 // Calculate minimum value in dataset
 function calcMinValue(data) {
   // Create an empty array to store all data values
@@ -75,18 +54,6 @@ function calcPropRadius(attValue) {
   var radius = 1.0083 * Math.pow(attValue/minValue, 0.5715) * minRadius
 
   return radius;
-};
-
-// Create popup setContent
-function PopupContent(properties, attribute) {
-  this.properties = properties;
-  this.attribute = attribute;
-  this.year = attribute.split("_")[1];
-  this.ridership = this.properties[attribute];
-  this.formatted = "<p><b>Station:</b> " + this.properties.Station +
-  "</p><p>" + "<b><p>Lines served:</b> " + this.properties.Lines +
-  "</p><p><b>Average weekday ridership in " + this.year + ":</b> "
-  + this.ridership + "</p>";
 };
 
 // Step 3: Add circle markers for subway stations to map
@@ -124,7 +91,7 @@ function pointToLayer(feature, latlng, attributes){
   // popupContent2.formatted = "<h2>" + popupContent.ridership + "</h2>";
   // console.log(popupContent.formatted)
 
-  // Bind the popup to the circle marker
+  // Bind the popupt to the circle marker
   layer.bindPopup(popupContent.formatted, {
     offset: new L.Point(0,-geojsonMarkerOptions.radius)
   });
@@ -132,6 +99,17 @@ function pointToLayer(feature, latlng, attributes){
   // return the circle maker to the L.geoJson pointToLayer option
   return layer;
 
+};
+
+function PopupContent(properties, attribute) {
+  this.properties = properties;
+  this.attribute = attribute;
+  this.year = attribute.split("_")[1];
+  this.ridership = this.properties[attribute];
+  this.formatted = "<p><b>Station:</b> " + this.properties.Station +
+  "</p><p>" + "<b><p>Lines served:</b> " + this.properties.Lines +
+  "</p><p><b>Average weekday ridership in " + this.year + ":</b> "
+  + this.ridership + "</p>";
 };
 
 //Add the created circle markers to the map
@@ -143,6 +121,7 @@ function createPropSymbols(data){
     }
   }).addTo(map);
 };
+
 
 // // // CREATE SLIDER TO ALLOW USER TO SEQUENCE THROUGH THE ATTRIBUTES
 //Sequence Step 1. Create slider widget
@@ -223,35 +202,26 @@ function createSequenceControls(attributes) {
 };
 
 
-// Create new extended control for the temporal legend
-function createLegend(attributes){
-  var LegendControl = L.Control.extend({
-    options: {
-      position: 'bottomright'
-    },
+//Sequence Step 3. Create an array of the sequential attributes to keep track of their order
+function processData(data) {
+  // empty array to hold attributes
+  var attributes = [];
 
-    onAdd: function () {
-      // Create the control conatiner with a particular class name
-      var container = L.DomUtil.create('div', 'legend-control-container');
+  // properties of the first feature in the dataset
+  var properties = data.features[0].properties;
 
-      // Script to create temporal legend here
-      $(container).append('<div id = "temporal-legend"><b>Average Weekday Ridership in</b>');
+  // push each attribute name into attributes array
+  for (var attribute in properties){
+    // only take attributes with average weekday ridership values
+    if (attribute.indexOf("AWR") > -1){
+      attributes.push(attribute);
+    };
+  };
+  // check result
+  console.log(attributes);
 
-      return container;
-    }
-  });
-  map.addControl(new LegendControl());
-  $('#temporal-legend').append('<p>Test</p>');
-  updateLegend(attributes[0])
-}
-
-// Function to update legend *** NOT WORKING ***
-function updateLegend(attribute) {
-  year = attribute.split("_")[1];
-  $('<p>' + year + '</p>').appendTo('#temporal-legend');
+  return attributes;
 };
-
-
 
 //Sequence Step 10. Resize proportional symbols according to each feature's value for the new attribute
 function updatePropSymbols(attribute){
@@ -270,9 +240,6 @@ function updatePropSymbols(attribute){
       //update popup popup content
       popup = layer.getPopup();
       popup.setContent(popupContent.formatted).update();
-
-      // update legend
-      updateLegend(attribute);
     };
   });
 };
@@ -293,7 +260,6 @@ function getData(){
       // Call function to make proportional symbols
       createPropSymbols(response);
       createSequenceControls(attributes);
-      createLegend(attributes);
     });
 };
 
