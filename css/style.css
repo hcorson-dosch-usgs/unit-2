@@ -20,14 +20,24 @@
 }
 
 .legend-control-container {
-  width: 300px;
-  height: 30px;
   background-color: rgba(255,255,255,0.8);
   padding: 10px;
   line-height: 45px;
   text-align: center;
   border: solid gray 1px;
 }
+
+/* #temporal-legend {
+  height: 30px;
+  text-align: center;
+  vertical-align: top;
+}
+
+#attribute-legend {
+
+} */
+
+
 
 .sequence-control-container {
   width: 350px;

@@ -4,8 +4,8 @@
 // initialize the map and set its view and initial zoom level (11)
 //
 var map;
-var minValue;
 var attributes;
+var dataStats = {};
 
 function createMap(){
   // create the map
@@ -45,7 +45,7 @@ function processData(data) {
 };
 
 // Calculate minimum value in dataset
-function calcMinValue(data) {
+function calcStats(data) {
   // Create an empty array to store all data values
   var allValues = [];
 
@@ -60,10 +60,13 @@ function calcMinValue(data) {
     }
   };
 
-  // Get minimum value of our array
-  var minValue = Math.min(...allValues)
+  // Get minimum,and maximum values of our array
+  dataStats.min = Math.min(...allValues);
+  dataStats.max = Math.max(...allValues);
 
-  return minValue;
+  // Calculate mean
+  var sum = allValues.reduce(function(a, b){return a+b;});
+  dataStats.mean = sum/allValues.length;
 }
 
 // Calculate the radius of each proportional symbol
@@ -72,7 +75,7 @@ function calcPropRadius(attValue) {
   var minRadius = 8;
 
   // Flannery appearance compensation formula
-  var radius = 1.0083 * Math.pow(attValue/minValue, 0.5715) * minRadius
+  var radius = 1.0083 * Math.pow(attValue/dataStats.min, 0.5715) * minRadius
 
   return radius;
 };
@@ -98,7 +101,7 @@ function pointToLayer(feature, latlng, attributes){
 
   // set marker options
   var geojsonMarkerOptions = {
-    fillColor: "#fdf539",
+    fillColor: "#f47821",
     color: "#000",
     weight: 1,
     opacity: 1,
@@ -210,6 +213,7 @@ function createSequenceControls(attributes) {
     $('.range-slider').val(index);
     //Sequence Step 9. Reassign the current attribute based on the new attributes array index
     updatePropSymbols(attributes[index]);
+    updateLegend(attributes[index]);
   });
   //
   // // input listener for slider
@@ -219,12 +223,13 @@ function createSequenceControls(attributes) {
     console.log(index);
     //Sequence Step 9. Reassign the current attribute based on the new attributes array index
     updatePropSymbols(attributes[index]);
+    updateLegend(attributes[index]);
   });
 };
 
 
 // Create new extended control for the temporal legend
-function createLegend(attributes){
+function createLegend(attribute){
   var LegendControl = L.Control.extend({
     options: {
       position: 'bottomright'
@@ -234,21 +239,46 @@ function createLegend(attributes){
       // Create the control conatiner with a particular class name
       var container = L.DomUtil.create('div', 'legend-control-container');
 
+      // define year variable
+      var year = attribute.split("_")[1];
       // Script to create temporal legend here
-      $(container).append('<div id = "temporal-legend"><b>Average Weekday Ridership in</b>');
+      $(container).append('<div id = "temporal-legend"><b>Average Weekday Ridership in '+ year +'</b>');
+
+      // Step 1: start attribute legend svg string
+      // var svg = '<svg id ="attribute-legend" width="130 px" height= "130px"></svg>';
+      //
+      // // array of circle names that loop is based on
+      // var circles = ["max", "mean", "min"];
+      //
+      // // Step 2: loop to add each circle and text to svg string
+      // for (var i=0; i<circles.length; i++){
+      //   // Step 3: for each circle, assign the r and cy attributes
+      //   var radius = calcPropRadius(dataStats[circles[i]]);
+      //   var cy = 130 - radius;
+      //
+      //   // circle string
+      //   svg += '<circle class="legend-circle" id="' + circles[i] + '" r="' + radius + '"cy="' + cy + '" fill="#F47821" fill-opacity="0.8" stroke="000000" cx="65"/>';
+      // };
+      // // then close the svg string
+      // svg += "</svg>";
+
+      // Add attribute legend to container
+      // $(container).append(svg);
+
+      // Disable any mouse event listeners for the container
+      L.DomEvent.disableClickPropagation(container);
 
       return container;
     }
   });
   map.addControl(new LegendControl());
-  $('#temporal-legend').append('<p>Test</p>');
-  updateLegend(attributes[0])
 }
 
 // Function to update legend *** NOT WORKING ***
 function updateLegend(attribute) {
-  year = attribute.split("_")[1];
-  $('<p>' + year + '</p>').appendTo('#temporal-legend');
+  var legend = document.getElementById("temporal-legend");
+  var year = attribute.split("_")[1];
+  legend.innerHTML = '<b>Average Weekday Ridership in '+ year +'</b>';
 };
 
 
@@ -271,8 +301,6 @@ function updatePropSymbols(attribute){
       popup = layer.getPopup();
       popup.setContent(popupContent.formatted).update();
 
-      // update legend
-      updateLegend(attribute);
     };
   });
 };
@@ -288,12 +316,12 @@ function getData(){
       attributes = processData(response)
 
       // Calculate minimum data value
-      minValue = calcMinValue(response);
+      calcStats(response);
 
       // Call function to make proportional symbols
       createPropSymbols(response);
       createSequenceControls(attributes);
-      createLegend(attributes);
+      createLegend(attributes[0]);
     });
 };
 
