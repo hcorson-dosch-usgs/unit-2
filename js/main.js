@@ -242,28 +242,28 @@ function createLegend(attribute){
       // define year variable
       var year = attribute.split("_")[1];
       // Script to create temporal legend here
-      $(container).append('<div id = "temporal-legend"><b>Average Weekday Ridership in '+ year +'</b>');
+      $(container).append('<div id = "temporal-legend"><p><b>Average Weekday Ridership in '+ year +'</b></p></div>');
 
       // Step 1: start attribute legend svg string
-      // var svg = '<svg id ="attribute-legend" width="130 px" height= "130px"></svg>';
+      var svg = '<svg id ="attribute-legend"></svg>';
       //
       // // array of circle names that loop is based on
-      // var circles = ["max", "mean", "min"];
-      //
-      // // Step 2: loop to add each circle and text to svg string
-      // for (var i=0; i<circles.length; i++){
-      //   // Step 3: for each circle, assign the r and cy attributes
-      //   var radius = calcPropRadius(dataStats[circles[i]]);
-      //   var cy = 130 - radius;
-      //
-      //   // circle string
-      //   svg += '<circle class="legend-circle" id="' + circles[i] + '" r="' + radius + '"cy="' + cy + '" fill="#F47821" fill-opacity="0.8" stroke="000000" cx="65"/>';
-      // };
-      // // then close the svg string
-      // svg += "</svg>";
+      var circles = ["max", "mean", "min"];
 
-      // Add attribute legend to container
-      // $(container).append(svg);
+      // Step 2: loop to add each circle and text to svg string
+      for (var i=0; i<circles.length; i++){
+        // Step 3: for each circle, assign the r and cy attributes
+        var radius = calcPropRadius(dataStats[circles[i]]);
+        var cy = 130 - radius;
+
+        // circle string
+        svg += '<circle class="legend-circle" id="' + circles[i] + '" r="' + radius + '"cy="' + cy + '" fill="#F47821" fill-opacity="0.8" stroke="000000" cx="65"/>';
+      };
+      // // then close the svg string
+      svg += "</svg>";
+      //
+      // // Add attribute legend to container
+      $(container).append(svg);
 
       // Disable any mouse event listeners for the container
       L.DomEvent.disableClickPropagation(container);
@@ -274,7 +274,7 @@ function createLegend(attribute){
   map.addControl(new LegendControl());
 }
 
-// Function to update legend *** NOT WORKING ***
+// Function to update legend
 function updateLegend(attribute) {
   var legend = document.getElementById("temporal-legend");
   var year = attribute.split("_")[1];

@@ -21,20 +21,47 @@
 
 .legend-control-container {
   background-color: rgba(255,255,255,0.8);
+  width: 300px;
+  height: 300px;
   padding: 10px;
-  line-height: 45px;
+  /* line-height: 45px; */
   text-align: center;
   border: solid gray 1px;
+  overflow: auto;
 }
 
-/* #temporal-legend {
+/* .legend-circle {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+#max.legend-circle {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+#min.legend-circle {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+#mean.legend-circle {
+  width: 100%;
+  height: 100%;
+  position: relative;
+} */
+
+#temporal-legend {
   height: 30px;
-  text-align: center;
-  vertical-align: top;
 }
 
-#attribute-legend {
-
+/* #attribute-legend {
+  height: 260px;
+  width: 300px;
+  overflow: auto;
 } */
 
 
