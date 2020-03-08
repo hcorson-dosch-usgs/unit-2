@@ -1,27 +1,51 @@
 // Mapping MTA data
 
+// Remaining steps:
+// 1. Add in title
+// 2. Add in map context in side panel AND data sources
+// 3. consider changing base map?
+// 4. restrict pan?
+// 5. restrict zoom?
+// 6. Add in checkbox filters?
+// 7. Add in more stations?
+// 8. Format numbers in legend and popups?
+
+
 // STEP 1 - Make a map of the MTA dataset
 // initialize the map and set its view and initial zoom level (11)
 //
 var map;
 var attributes;
 var dataStats = {};
+var apikey = '<d88dbfddfd6642878eae6e6e3c96bdfa>';
 
 function createMap(){
   // create the map
   map = L.map('mapid', {
-    center: [40.73, -74],
+    center: [40.73, -73.95],
     zoom: 12
   });
 
   // add oSM base tilelayer
-  L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>'
-    }).addTo(map);
+  // L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  //       attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>'
+  //   }).addTo(map);
+  // Add ThunderForest base layer
+  L.tileLayer('https://{s}.tile.thunderforest.com/transport/{z}/{x}/{y}.png?apikey=d88dbfddfd6642878eae6e6e3c96bdfa', {
+	   attribution: '&copy; <a href="http://www.thunderforest.com/">Thunderforest</a>, &copy; <a href="https://www.openstreetmap.org/copyright"> OpenStreetMap contributors</a>',
+	   maxZoom: 22
+  }).addTo(map);
+  // L.tileLayer.provider('ThunderForest.Transport', {apikey: 'd88dbfddfd6642878eae6e6e3c96bdfa'}).addTo(map);
 
-    //call getData function
-    getData();
+  //call getData function
+  getData();
 };
+
+function createSidePanel(){
+    //create range input element (slider)
+    $('#panel').append('<h2>Average Weekday Ridership from 2011 - 2018 for the Top 20 Subway Stations in New York City</h2>');
+};
+
 
 //Sequence Step 3. Create an array of the sequential attributes to keep track of their order
 function processData(data) {
@@ -87,9 +111,9 @@ function PopupContent(properties, attribute) {
   this.year = attribute.split("_")[1];
   this.ridership = this.properties[attribute];
   this.formatted = "<p><b>Station:</b> " + this.properties.Station +
-  "</p><p>" + "<b><p>Lines served:</b> " + this.properties.Lines +
+  "</p><p>" + "<b><p>Lines served:</b> " + listWithCommas(String(this.properties.Lines)) +
   "</p><p><b>Average weekday ridership in " + this.year + ":</b> "
-  + this.ridership + "</p>";
+  + numberWithCommas(this.ridership) + " people" + "</p>";
 };
 
 // Step 3: Add circle markers for subway stations to map
@@ -101,7 +125,7 @@ function pointToLayer(feature, latlng, attributes){
 
   // set marker options
   var geojsonMarkerOptions = {
-    fillColor: "#f47821",
+    fillColor: "#FFDF00",
     color: "#000",
     weight: 1,
     opacity: 1,
@@ -163,14 +187,14 @@ function createSequenceControls(attributes) {
         // create a slider (range input element)
         $(container).append('<input class="range-slider" type="range">');
 
-      //Sequence Step 2. Create step buttons
-      $(container).append('<button class="step" id="reverse"></button>');
-      $(container).append('<button class="step" id="forward"></button>');
+        //Sequence Step 2. Create step buttons
+        $(container).append('<button class="step" id="reverse"></button>');
+        $(container).append('<button class="step" id="forward"></button>');
 
-      // Disable any mouse event listeners for the container
-      L.DomEvent.disableClickPropagation(container);
+        // Disable any mouse event listeners for the container
+        L.DomEvent.disableClickPropagation(container);
 
-      return container;
+        return container;
     }
 
   });
@@ -242,11 +266,11 @@ function createLegend(attribute){
       // define year variable
       var year = attribute.split("_")[1];
       // Script to create temporal legend here
-      $(container).append('<div id = "temporal-legend"><p><b>Average Weekday Ridership in '+ year +'</b></p></div>');
+      $(container).append('<div id = "temporal-legend"><b>Average Weekday Ridership in '+ year +'</b></div>');
 
       // Step 1: start attribute legend svg string
-      var svg = '<svg id ="attribute-legend"></svg>';
-      //
+      var svg = '<svg id ="attribute-legend" width = "210px" height = "60px">';
+
       // // array of circle names that loop is based on
       var circles = ["max", "mean", "min"];
 
@@ -254,10 +278,17 @@ function createLegend(attribute){
       for (var i=0; i<circles.length; i++){
         // Step 3: for each circle, assign the r and cy attributes
         var radius = calcPropRadius(dataStats[circles[i]]);
-        var cy = 130 - radius;
+        var cy = 59 - radius;
 
         // circle string
-        svg += '<circle class="legend-circle" id="' + circles[i] + '" r="' + radius + '"cy="' + cy + '" fill="#F47821" fill-opacity="0.8" stroke="000000" cx="65"/>';
+        svg += '<circle class="legend-circle" id="' + circles[i] + '" r="' + radius + '"cy="' + cy + '" fill="#FFDF00" fill-opacity="0.8" stroke="#000000" cx="30"/>';
+
+        // evenly space out the labels
+        var textY = i * 15 + 20;
+
+        // Text string
+        svg += '<text id="' + circles[i] + '-text" x= "70" y = "' + textY + '">' + numberWithCommas(Math.round(dataStats[circles[i]]*100)/100) + " people" + '</text>';
+
       };
       // // then close the svg string
       svg += "</svg>";
@@ -305,7 +336,22 @@ function updatePropSymbols(attribute){
   });
 };
 
+function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
 
+function listWithCommas(string) {
+  var len = string.length
+  var str = ""
+  for (var i=0; i<string.length; i++){
+    if (i < (len-1)) {
+      str += string[i] + ','
+    } else {
+      str += string[i]
+    };
+  };
+  return str;
+};
 
 // STEP 2 - Import GeoJSON data
 //function to retrieve the data (using AJAX) and place it on the map
@@ -322,6 +368,7 @@ function getData(){
       createPropSymbols(response);
       createSequenceControls(attributes);
       createLegend(attributes[0]);
+      createSidePanel();
     });
 };
 
