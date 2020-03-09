@@ -1,5 +1,36 @@
 /* Stylesheet by Hayley Corson-Dosch */
 
+h2 {
+  font-family: Arial;
+  text-align: center;
+}
+
+h5 {
+  font-family: Arial;
+  text-align: left;
+  line-height: 20px;
+}
+
+h6 {
+  font-family: Arial;
+  text-align: left;
+}
+
+#Guidance {
+  font-family: Arial;
+  text-align: left;
+  line-height: 15px;
+  font-size: 10px;
+}
+
+
+#Sources {
+  font-family: Arial;
+  text-align: left;
+  line-height: 15px;
+  font-size: 10px;
+}
+
 #mapid {
   height: 600px;
   width: 80%;

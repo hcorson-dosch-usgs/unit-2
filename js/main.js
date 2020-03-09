@@ -1,14 +1,9 @@
 // Mapping MTA data
 
 // Remaining steps:
-// 1. Add in title
-// 2. Add in map context in side panel AND data sources
-// 3. consider changing base map?
-// 4. restrict pan?
-// 5. restrict zoom?
-// 6. Add in checkbox filters?
-// 7. Add in more stations?
-// 8. Format numbers in legend and popups?
+// 1. Add in checkbox filters?
+// 2. Add in more stations?
+// 3. Add in scale bar?
 
 
 // STEP 1 - Make a map of the MTA dataset
@@ -23,27 +18,56 @@ function createMap(){
   // create the map
   map = L.map('mapid', {
     center: [40.73, -73.95],
-    zoom: 12
+    zoom: 12,
+    minZoom: 11,
+    maxZoom: 20,
+    maxBounds: [
+      [40.25, -74.45],
+      [41.25, -73.45]]
   });
 
-  // add oSM base tilelayer
-  // L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  //       attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>'
-  //   }).addTo(map);
+
   // Add ThunderForest base layer
   L.tileLayer('https://{s}.tile.thunderforest.com/transport/{z}/{x}/{y}.png?apikey=d88dbfddfd6642878eae6e6e3c96bdfa', {
 	   attribution: '&copy; <a href="http://www.thunderforest.com/">Thunderforest</a>, &copy; <a href="https://www.openstreetmap.org/copyright"> OpenStreetMap contributors</a>',
 	   maxZoom: 22
   }).addTo(map);
-  // L.tileLayer.provider('ThunderForest.Transport', {apikey: 'd88dbfddfd6642878eae6e6e3c96bdfa'}).addTo(map);
+  // BACKUP OPTION:
+  // add oSM base tilelayer
+  // L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  //       attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>'
+  //   }).addTo(map);
 
   //call getData function
   getData();
 };
 
 function createSidePanel(){
-    //create range input element (slider)
-    $('#panel').append('<h2>Average Weekday Ridership from 2011 - 2018 for the Top 20 Subway Stations in New York City</h2>');
+    //Add intro text
+    var intro_text = "<h5>"
+    intro_text += 'The New York City Metropolitan Transit Authority (MTA) tracks subway ridership in subway stations within four boroughs: The Bronx, Brooklyn, Queens, and Manhattan. '
+    intro_text += 'As a metric to evaluate the use of each station by commuters, the MTA computes average weekday ridership for each station in a given year. '
+    intro_text += 'This map presents average weekday ridership values from 2011 through 2018 for the top 20 subway stations in New York City, all of which fall within Brooklyn, Queens, or Manhattan. '
+    intro_text += "</h5>"
+    $('#panel').append(intro_text);
+
+    // Add guidance text
+    var guidance_text = '<h6 id = "Guidance">'
+    guidance_text += '<b>Tip: </b>'
+    guidance_text += '<i>Use the slider or the forward and reverse buttons to change the year for which data is displayed on the map.</i>'
+    guidance_text += '<br><br><b>Tip: </b>'
+    guidance_text += '<i>Click on the proportional symbol for a given station to see the station name, the lines it serves, and the average weekly ridership value for the selected year.'
+    guidance_text += '</h6>'
+    $('#panel').append(guidance_text);
+
+    // Add sources
+    var sources_text = '<h6 id = "Sources">'
+    sources_text += '<b>Sources:</b>'
+    sources_text += '<br>MTA: <a target="_blank" href = "http://web.mta.info/nyct/facts/ridership/ridership_sub.htm"><i>2013 - 2018 average weekday ridership</i></a>'
+    sources_text += '<br>City of New York: <a target="_blank" href = "https://data.cityofnewyork.us/Transportation/Subway-Stations/arq3-7z49"><i>Subway station locations</i></a>'
+    sources_text += '<br>MTA, Benjamin Gordon 2019: <a target="_blank" href = "https://www.arcgis.com/apps/webappviewer/index.html?id=1ff83a326c4b4f029a766392bf9e1943&extent=-8245998.9269%2C4976190.0524%2C-8209309.1534%2C4994210.0818%2C102100"><i>2011 - 2012 average weekday ridership</i></a>'
+    sources_text += '</h6>'
+    $('#panel').append(sources_text)
 };
 
 
@@ -144,12 +168,6 @@ function pointToLayer(feature, latlng, attributes){
 
   // Build string for popup content
   var popupContent = new PopupContent(feature.properties, attribute);
-
-  // // TEST CODE: temp change to popup content
-  // popupContent.formatted = "<h2>" + popupContent.ridership + "</h2";
-  // var popupContent2 = Object.create(popupContent);
-  // popupContent2.formatted = "<h2>" + popupContent.ridership + "</h2>";
-  // console.log(popupContent.formatted)
 
   // Bind the popup to the circle marker
   layer.bindPopup(popupContent.formatted, {
