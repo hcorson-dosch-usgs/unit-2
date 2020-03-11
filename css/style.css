@@ -1,36 +1,5 @@
 /* Stylesheet by Hayley Corson-Dosch */
 
-h2 {
-  font-family: Arial;
-  text-align: center;
-}
-
-h5 {
-  font-family: Arial;
-  text-align: left;
-  line-height: 20px;
-}
-
-h6 {
-  font-family: Arial;
-  text-align: left;
-}
-
-#Guidance {
-  font-family: Arial;
-  text-align: left;
-  line-height: 15px;
-  font-size: 10px;
-}
-
-
-#Sources {
-  font-family: Arial;
-  text-align: left;
-  line-height: 15px;
-  font-size: 10px;
-}
-
 #mapid {
   height: 600px;
   width: 80%;
@@ -50,12 +19,42 @@ h6 {
   line-height: 30px;
 }
 
+#Guidance {
+  font-family: Arial;
+  text-align: left;
+  line-height: 15px;
+  font-size: 10px;
+}
+
+
+#Sources {
+  font-family: Arial;
+  text-align: left;
+  line-height: 15px;
+  font-size: 10px;
+}
+
+h2 {
+  font-family: Arial;
+  text-align: center;
+}
+
+h5 {
+  font-family: Arial;
+  text-align: left;
+  line-height: 20px;
+}
+
+h6 {
+  font-family: Arial;
+  text-align: left;
+}
+
 .legend-control-container {
   background-color: rgba(255,255,255,0.8);
   width: 210px;
   height: 80px;
   padding: 10px;
-  /* line-height: 45px; */
   text-align: center;
   border: solid gray 1px;
   overflow: auto;
@@ -65,7 +64,6 @@ h6 {
 #temporal-legend {
   height: 20px;
 }
-
 
 .sequence-control-container {
   width: 280px;

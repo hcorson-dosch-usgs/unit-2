@@ -1,19 +1,19 @@
-// GEOG 575 - Lab 1
-// Hayley Corson-Dosch
 // Mapping MTA data
 
-// *****************************************************************//
-// Define global variables
+// Remaining steps:
+// 1. Add in checkbox filters?
+// 2. Add in more stations?
+// 3. Add in scale bar?
+
+
+// STEP 1 - Make a map of the MTA dataset
+// initialize the map and set its view and initial zoom level (11)
+//
 var map;
 var attributes;
 var dataStats = {};
 var apikey = '<d88dbfddfd6642878eae6e6e3c96bdfa>';
 
-
-// *****************************************************************//
-// STEP 1 - Make a map of the MTA dataset
-// initialize the map and set its view and initial zoom level
-// restrict pan and zoom as appropriate for the dataset
 function createMap(){
   // create the map
   map = L.map('mapid', {
@@ -26,7 +26,8 @@ function createMap(){
       [41.25, -73.45]]
   });
 
-  // Add ThunderForest transit-themed base layer
+
+  // Add ThunderForest base layer
   L.tileLayer('https://{s}.tile.thunderforest.com/transport/{z}/{x}/{y}.png?apikey=d88dbfddfd6642878eae6e6e3c96bdfa', {
 	   attribution: '&copy; <a href="http://www.thunderforest.com/">Thunderforest</a>, &copy; <a href="https://www.openstreetmap.org/copyright"> OpenStreetMap contributors</a>',
 	   maxZoom: 22
@@ -41,29 +42,27 @@ function createMap(){
   getData();
 };
 
-// *****************************************************************//
-// Create side panel to hold information about the map and relevant context
 function createSidePanel(){
     //Add intro text
     var intro_text = "<h5>"
     intro_text += 'The New York City Metropolitan Transit Authority (MTA) tracks subway ridership in subway stations within four boroughs: The Bronx, Brooklyn, Queens, and Manhattan. '
     intro_text += 'As a metric to evaluate the use of each station by commuters, the MTA computes average weekday ridership for each station in a given year. '
-    intro_text += 'This map presents average weekday ridership values from 2011 through 2018 for the 20 busiest subway stations in New York City, all of which fall within Brooklyn, Queens, or Manhattan. '
+    intro_text += 'This map presents average weekday ridership values from 2011 through 2018 for the top 20 subway stations in New York City, all of which fall within Brooklyn, Queens, or Manhattan. '
     intro_text += "</h5>"
     $('#panel').append(intro_text);
 
     // Add guidance text
     var guidance_text = '<h6 id = "Guidance">'
-    guidance_text += '<br><b>Tip: </b>'
-    guidance_text += '<i>Use the slider or the forward and reverse buttons to change the year for which data are displayed on the map.</i>'
+    guidance_text += '<b>Tip: </b>'
+    guidance_text += '<i>Use the slider or the forward and reverse buttons to change the year for which data is displayed on the map.</i>'
     guidance_text += '<br><br><b>Tip: </b>'
-    guidance_text += '<i>Click on the proportional symbol for a given station to see the station name, the subway lines it serves, and the average weekday ridership value for that station for the selected year.'
+    guidance_text += '<i>Click on the proportional symbol for a given station to see the station name, the lines it serves, and the average weekly ridership value for the selected year.'
     guidance_text += '</h6>'
     $('#panel').append(guidance_text);
 
     // Add sources
     var sources_text = '<h6 id = "Sources">'
-    sources_text += '<br><br><b>Sources:</b>'
+    sources_text += '<b>Sources:</b>'
     sources_text += '<br>MTA: <a target="_blank" href = "http://web.mta.info/nyct/facts/ridership/ridership_sub.htm"><i>2013 - 2018 average weekday ridership</i></a>'
     sources_text += '<br>City of New York: <a target="_blank" href = "https://data.cityofnewyork.us/Transportation/Subway-Stations/arq3-7z49"><i>Subway station locations</i></a>'
     sources_text += '<br>MTA, Benjamin Gordon 2019: <a target="_blank" href = "https://www.arcgis.com/apps/webappviewer/index.html?id=1ff83a326c4b4f029a766392bf9e1943&extent=-8245998.9269%2C4976190.0524%2C-8209309.1534%2C4994210.0818%2C102100"><i>2011 - 2012 average weekday ridership</i></a>'
@@ -71,7 +70,7 @@ function createSidePanel(){
     $('#panel').append(sources_text)
 };
 
-// *****************************************************************//
+
 //Sequence Step 3. Create an array of the sequential attributes to keep track of their order
 function processData(data) {
   // empty array to hold attributes
@@ -87,13 +86,13 @@ function processData(data) {
       attributes.push(attribute);
     };
   };
+  // check result
+  console.log(attributes);
 
-  // return the result
   return attributes;
 };
 
-// *****************************************************************//
-// Calculate minimum, mean, and maximum values in dataset
+// Calculate minimum value in dataset
 function calcStats(data) {
   // Create an empty array to store all data values
   var allValues = [];
@@ -115,24 +114,21 @@ function calcStats(data) {
 
   // Calculate mean
   var sum = allValues.reduce(function(a, b){return a+b;});
-  dataStats.mean = Math.round(sum/allValues.length);
+  dataStats.mean = sum/allValues.length;
 }
 
-// *****************************************************************//
 // Calculate the radius of each proportional symbol
 function calcPropRadius(attValue) {
-  // Set minimum radius - Constant factor adjusts symbol sizes evenly
+  // Constant factor adjusts symbol sizes evenly
   var minRadius = 8;
 
   // Flannery appearance compensation formula
   var radius = 1.0083 * Math.pow(attValue/dataStats.min, 0.5715) * minRadius
 
-  // return the computed radius
   return radius;
 };
 
-// *****************************************************************//
-// Set popup content and formatting
+// Create popup setContent
 function PopupContent(properties, attribute) {
   this.properties = properties;
   this.attribute = attribute;
@@ -144,11 +140,12 @@ function PopupContent(properties, attribute) {
   + numberWithCommas(this.ridership) + " people" + "</p>";
 };
 
-// *****************************************************************//
-// Step 3: create the circle markers for subway stations and bind popup content
+// Step 3: Add circle markers for subway stations to map
 function pointToLayer(feature, latlng, attributes){
   //Sequence Step 4. Assign the current attribute based on the index of the attributes array
   var attribute = attributes[0];
+  // check attribute
+  console.log(attribute)
 
   // set marker options
   var geojsonMarkerOptions = {
@@ -179,9 +176,9 @@ function pointToLayer(feature, latlng, attributes){
 
   // return the circle maker to the L.geoJson pointToLayer option
   return layer;
+
 };
 
-// *****************************************************************//
 //Add the created circle markers to the map
 function createPropSymbols(data){
   // create a leaflet GeoJSOn layer and add it to the map
@@ -192,9 +189,8 @@ function createPropSymbols(data){
   }).addTo(map);
 };
 
-// *****************************************************************//
 // // // CREATE SLIDER TO ALLOW USER TO SEQUENCE THROUGH THE ATTRIBUTES
-//Sequence Step 1. Create slider widget and buttons
+//Sequence Step 1. Create slider widget
 function createSequenceControls(attributes) {
   var SequenceControl = L.Control.extend({
       options: {
@@ -218,8 +214,9 @@ function createSequenceControls(attributes) {
 
         return container;
     }
+
   });
-  // Add the sequence control to the map
+
   map.addControl(new SequenceControl());
 
   // set attributes of slider
@@ -260,8 +257,8 @@ function createSequenceControls(attributes) {
     updatePropSymbols(attributes[index]);
     updateLegend(attributes[index]);
   });
-
-  // input listener for slider
+  //
+  // // input listener for slider
   $('.range-slider').on('input', function(){
     //Sequence Step 6: get the new index value
     var index = $(this).val();
@@ -272,14 +269,8 @@ function createSequenceControls(attributes) {
   });
 };
 
-// *****************************************************************//
-// Add a scale bar to the map
-function createScaleBar() {
-  L.control.scale().addTo(map);
-};
 
-// *****************************************************************//
-// Create new extended control for the temporal legend and attribute legend
+// Create new extended control for the temporal legend
 function createLegend(attribute){
   var LegendControl = L.Control.extend({
     options: {
@@ -307,14 +298,15 @@ function createLegend(attribute){
         var radius = calcPropRadius(dataStats[circles[i]]);
         var cy = 59 - radius;
 
-        // set formatting of circles
+        // circle string
         svg += '<circle class="legend-circle" id="' + circles[i] + '" r="' + radius + '"cy="' + cy + '" fill="#FFDF00" fill-opacity="0.8" stroke="#000000" cx="30"/>';
 
         // evenly space out the labels
-        var textY = i * 15 + 18;
+        var textY = i * 15 + 20;
 
-        // Set text string content and formatting
+        // Text string
         svg += '<text id="' + circles[i] + '-text" x= "70" y = "' + textY + '">' + numberWithCommas(Math.round(dataStats[circles[i]]*100)/100) + " people" + '</text>';
+
       };
       // // then close the svg string
       svg += "</svg>";
@@ -328,11 +320,9 @@ function createLegend(attribute){
       return container;
     }
   });
-  // Add legend to map
   map.addControl(new LegendControl());
 }
 
-// *****************************************************************//
 // Function to update legend
 function updateLegend(attribute) {
   var legend = document.getElementById("temporal-legend");
@@ -340,7 +330,8 @@ function updateLegend(attribute) {
   legend.innerHTML = '<b>Average Weekday Ridership in '+ year +'</b>';
 };
 
-// *****************************************************************//
+
+
 //Sequence Step 10. Resize proportional symbols according to each feature's value for the new attribute
 function updatePropSymbols(attribute){
   map.eachLayer(function(layer){
@@ -363,20 +354,16 @@ function updatePropSymbols(attribute){
   });
 };
 
-// *****************************************************************//
-// function to format numbers in popups with commas
 function numberWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-// *****************************************************************//
-// function to splpit lines served strings in popups with commas
 function listWithCommas(string) {
   var len = string.length
   var str = ""
   for (var i=0; i<string.length; i++){
     if (i < (len-1)) {
-      str += string[i] + ', '
+      str += string[i] + ','
     } else {
       str += string[i]
     };
@@ -384,7 +371,6 @@ function listWithCommas(string) {
   return str;
 };
 
-// *****************************************************************//
 // STEP 2 - Import GeoJSON data
 //function to retrieve the data (using AJAX) and place it on the map
 function getData(){
@@ -393,22 +379,15 @@ function getData(){
       // Create an attributes array
       attributes = processData(response)
 
-      // Calculate minimum, maximum, and mean data values
+      // Calculate minimum data value
       calcStats(response);
 
       // Call function to make proportional symbols
       createPropSymbols(response);
-      // Call function to make sequence control
       createSequenceControls(attributes);
-      // Call function to create scale bar
-      createScaleBar();
-      // Call function to make temporal and attribute legend
       createLegend(attributes[0]);
-      // Call function to populate side panel
       createSidePanel();
     });
 };
 
-// *****************************************************************//
-// load map
 $(document).ready(createMap);
